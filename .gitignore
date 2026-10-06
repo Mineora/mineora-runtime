@@ -1,0 +1,8 @@
+release-assets/
+*.zip
+*.tar.gz
+*.tar.xz
+build/
+.env*
+*.jks
+*.keystore

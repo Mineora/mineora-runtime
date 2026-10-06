@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-06",
+  "runtime_used_by": "Mineora 1.2.6 (code 28)",
+  "runtime_id": "mineora-openjdk-25.0.4.1-android-integration-20261005-v2",
+  "clean_build": "Targeted runtime probes and Paper startup/save/normal stop passed; byte-identical packaging reproduction not established",
+  "runtime_probe_scope": [
+    "UTF-8 file and ZIP handling",
+    "NIO and child processes",
+    "instrumentation compatibility",
+    "headless fonts and PNG",
+    "crypto"
+  ],
+  "selected_server_checks": "Paper, Fabric, NeoForge and Cobblemon startup/save/normal stop; not every third-party feature",
+  "helper_cache_update": "Same-size modified helper replaced correctly on actual app start",
+  "native_alignment": "PT_LOAD and RELRO checks passed across 72 bundled/runtime ELF objects",
+  "actual_arm64_16kb_execution": "UNTESTED",
+  "older_android_8_to_10": "UNTESTED",
+  "older_live_release_source_matching": "Separate assessment required"
+}

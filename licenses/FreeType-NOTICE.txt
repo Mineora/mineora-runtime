@@ -1,0 +1,5 @@
+FreeType 2.14.3
+
+This software is based in part on the work of the FreeType Team.
+
+FreeType is used under the FreeType License. The complete licence and copyright notices are preserved in the bundled runtime legal/mineora/FreeType-FTL.TXT and FreeType-LICENSE.TXT. FreeType is provided as is, without warranty.

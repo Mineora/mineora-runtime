@@ -1,0 +1,11 @@
+{
+  "runtime_id": "mineora-openjdk-25.0.4.1-android-integration-20261005-v2",
+  "native_files": 67,
+  "common_files": 309,
+  "archives": {
+    "bin-arm64.tar.xz": "8b99e2ce17e5aa81cff385d9d0c5e62a345eca57333ba6e96e50058f8aa4413f",
+    "universal.tar.xz": "aff39f099b4f1cb768a90d9d16aa26392d79eb1a197eee87854e6f2135e6b780"
+  },
+  "launcher_sha256": "601e63091197ab6eec0e38edb340aa279ea82999e9f8f172b1ee858ce528b282",
+  "packaging_change": "Only lib/src.zip removed; all retained runtime file bytes unchanged"
+}
