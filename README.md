@@ -1,10 +1,22 @@
-# Mineora Android runtime
+<p align="center">
+  <img src="assets/mineora-logo.png" alt="Mineora" width="112">
+</p>
 
-Source, build instructions and licenses for the runtime components used by **Mineora 1.2.6 (code 28)**. The main runtime is a modified **OpenJDK 25.0.4.1 Android ARM64 port**. This repository does not contain the complete Mineora Android app, users' servers or a desktop Java installer.
+# Mineora Runtime
 
-## Runtime changes
+**Java for Minecraft servers on Android.**
 
-The Android port includes native file/UTF-8 bounds fixes and maps parsing repairs. Headless font support uses FreeType 2.14.3 and DejaVu 2.37 instead of Lucida fonts. Separate source downloads cover the Java compatibility helper, native helpers and Playit integration.
+Mineora uses this runtime to run Java Minecraft servers on your phone. It is an Android ARM64 adaptation of **OpenJDK 25.0.4.1**, packaged for the Mineora app.
+
+Selected Paper, Fabric and NeoForge servers have passed startup, save and stop checks. Plugin and mod compatibility depends on the server and its Java requirements. See [known limits](KNOWN-LIMITATIONS.md).
+
+This repository provides the matching source downloads, build instructions and component licenses for **Mineora 1.2.6 (code 28)**. It contains runtime materials, rather than the full Android app or Minecraft server software.
+
+## What Mineora changes
+
+- Android compatibility fixes for native file handling, UTF-8 bounds and process memory-map parsing.
+- Headless font support using FreeType 2.14.3 and DejaVu 2.37 instead of Lucida fonts.
+- Separate compatibility helpers and Playit integration, with their own source and notices.
 
 ## Start here
 
@@ -34,12 +46,12 @@ GitHub's automatic **Source code.zip** contains this documentation repository. I
 - [Installed runtime hashes](evidence/app-runtime-manifest.json)
 - [Validation summary](evidence/validation-summary.json)
 
-A separate clean runtime build passed targeted runtime and Paper tests. Byte-identical reproduction of the final packaged binaries is not established. The S22 tests and native alignment checks do not certify every Android device or third-party server pack. Older live Mineora releases require a separate matching-source assessment.
+Testing scope, reproduction limits and support for older releases are documented in [known limits](KNOWN-LIMITATIONS.md).
 
 ## Licenses
 
-Keep each component's notices and terms. OpenJDK uses GPL v2, with the Classpath Exception where designated. FreeType, DejaVu, Playit, ASM, AndroidX and the newly authored helper/tooling retain their own licenses. **There is no blanket MIT license for this repository or runtime.** Publishing this source does not automatically relicense the separate Kotlin app.
+OpenJDK uses GPL v2, with the Classpath Exception where designated. Other components retain their own licenses. Read [the license index](LICENSES.md) and preserve the supplied notices. There is no blanket MIT license for the runtime.
 
 This software is based in part on the work of the FreeType Team.
 
-This is a Mineora integration, not an official Oracle/OpenJDK or Playit binary distribution.
+The Mineora name and logo identify this project; they do not change any component's license. This is a Mineora integration, not an official Oracle/OpenJDK, Mojang/Microsoft or Playit distribution.
