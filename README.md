@@ -10,7 +10,7 @@ Mineora uses this runtime to run Java Minecraft servers on your phone. It is an 
 
 Selected Paper, Fabric and NeoForge servers have passed startup, save and stop checks. Plugin and mod compatibility depends on the server and its Java requirements. See [known limits](KNOWN-LIMITATIONS.md).
 
-This repository provides the matching source downloads, build instructions and component licenses for **Mineora 1.2.6 (code 28)**. It contains runtime materials, rather than the full Android app or Minecraft server software.
+This repository provides the matching source downloads, build instructions and component licenses for **[Mineora 1.2.6 (code 28), available on Google Play](https://play.google.com/store/apps/details?id=app.mineora)**. It contains runtime materials, rather than the full Android app or Minecraft server software.
 
 ## What Mineora changes
 
