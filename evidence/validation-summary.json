@@ -1,6 +1,6 @@
 {
   "date": "2026-10-06",
-  "runtime_used_by": "Mineora 1.2.6 (code 28)",
+  "runtime_used_by": "Mineora 1.2.6 (code 28) and 1.2.7 (code 30); identical runtime archives",
   "runtime_id": "mineora-openjdk-25.0.4.1-android-integration-20261005-v2",
   "clean_build": "Targeted runtime probes and Paper startup/save/normal stop passed; byte-identical packaging reproduction not established",
   "runtime_probe_scope": [
@@ -15,5 +15,6 @@
   "native_alignment": "PT_LOAD and RELRO checks passed across 72 bundled/runtime ELF objects",
   "actual_arm64_16kb_execution": "UNTESTED",
   "older_android_8_to_10": "UNTESTED",
-  "older_live_release_source_matching": "Separate assessment required"
+  "older_live_release_source_matching": "Separate assessment required",
+  "provenance": "evidence/build-provenance.md"
 }

@@ -1,0 +1,3 @@
+# Keep the repository LF everywhere; the build recipe must run on Linux as checked out.
+* text=auto eol=lf
+*.png binary
