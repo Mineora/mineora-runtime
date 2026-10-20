@@ -34,6 +34,24 @@ For Mineora's final layout:
 3. The Android executable launcher is packaged as `libjavaexec.so` in the app's ARM64 native-library directory. It originates from the runtime's `bin/java`, after the packaging/stripping steps. The name is for Android packaging; it is launched as an executable.
 4. Retain notices in the runtime and app distribution. The final shipped archive and launcher hashes are in `evidence/app-runtime-manifest.json`. A build that differs from them is a new binary requiring tests; do not claim hash identity.
 
+## Reproducing the shipped bytes
+
+The image embeds the configure-time version string and build date. The shipped runtime was built
+as `root` in a directory named `source` on 2026-10-05T06:02:30Z, so pass those values to get the
+same bytes:
+
+```bash
+VERSION_OPT=adhoc.root.source SOURCE_DATE=1791180150 bash tooling/build-port.sh ...
+```
+
+Result on October 20, 2026 (Arch Linux host, same inputs, NDK r27b, boot JDK Temurin 25.0.3): after
+the packaging steps above, 371 of the 372 files shared with the shipped runtime were byte-identical,
+including `libjvm.so`, `libjava.so`, every launcher and `release`. The one remaining difference is
+`lib/modules`: 4 bytes in each of two `jdk.jpackage` launcher resources (not used by Mineora) and the
+module hashes in `java.base/module-info.class` and `SystemModules*.class` that are derived from them.
+Without the two variables, 37 files differ, all of them only in the version string or build date.
+Details are in `evidence/build-provenance.md`.
+
 ## Validation
 
 Small probe sources are in `probes/`. Test file/ZIP UTF-8, NIO, ProcessBuilder, instrumentation, fonts/PNG, and a real server with normal saved shutdown. Also test application extraction/upgrade, existing worlds, launch flags and target Android versions. These probe sources are not a substitute for the complete OpenJDK test suite.

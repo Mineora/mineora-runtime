@@ -24,8 +24,16 @@ So every runtime file that Mineora installs is byte-identical to the clean build
 integration step only removed `lib/src.zip` and added four notice files before splitting the
 tree into the two archives and producing `libjavaexec.so` from `bin/java`.
 
-## Fresh rebuilds
+## Fresh rebuilds (October 20, 2026)
 
-A second build from the same recipe and inputs on a different Linux host is recorded here when
-it completes; whether it reproduces the clean build byte for byte is reported in this section
-rather than assumed.
+Two rebuilds from the same published inputs on a different Linux host (Arch Linux x86_64, GCC 16 host
+tools, NDK r27b, boot JDK Temurin 25.0.3+9), each packaged with the steps above and compared with
+the shipped runtime by path and SHA-256:
+
+| Build | Identical | Differ | Cause of the differences |
+|---|---|---|---|
+| Plain recipe | 335 of 372 shared files | 37 | Only the version string `25.0.4.1-internal-adhoc.<user>.<dir>` and the build date embedded in launchers, `libjvm.so`, `libjava.so`, `jspawnhelper`, `jrt-fs.jar`, `ct.sym`, `modules` and `release` |
+| Pinned (`VERSION_OPT=adhoc.root.source SOURCE_DATE=1791180150`) | 371 of 372 | 1 (`lib/modules`) | Inside the image: 4 bytes in each of `jdk.jpackage/.../jpackageapplauncher` and `libjpackageapplauncheraux.so` (jpackage launcher resources, not used by Mineora), and the module hashes in `java.base/module-info.class` and `SystemModules*.class` that cover them; 11 of 27,854 image entries |
+
+Both rebuilds finished in about 13 minutes on 8 cores. `libjvm.so`, `libjava.so`, every launcher,
+`release` and all other runtime files are byte-identical to the shipped runtime in the pinned build.

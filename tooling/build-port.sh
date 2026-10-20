@@ -2,6 +2,9 @@
 # Newly authored Mineora build tooling, 2026-10-01. SPDX-License-Identifier: MIT
 # See BUILD-TOOLING-LICENSE.txt. Portable recipe derived from the successful isolated audit build; a separate fresh build passed; byte-identical reproduction is not established.
 set -euo pipefail
+# Optional: VERSION_OPT and SOURCE_DATE pin the version string and build date that end up in the
+# image (see BUILDING.md, "Reproducing the shipped bytes"). Unset, configure picks adhoc.<user>.<dir>
+# and the current time, which changes a handful of files but no code.
 if [[ $# != 6 && $# != 7 ]]; then
  echo 'Usage: build-port.sh patched-source.tar.gz dependency-sources.tar.gz boot-jdk-directory ndk-r27b-directory new-output-directory freetype-2.14.3.tar.xz [native-overlay.tar.gz]' >&2
  exit 2
@@ -75,6 +78,7 @@ printf 'CONFIGURING_OPENJDK\n' > "$base/evidence/status"
 cd "$base/source"
 flags='-DLE_STANDALONE -O3 -mllvm -polly -DANDROID -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wno-error=implicit-function-declaration -Wno-error=int-conversion'
 bash configure --openjdk-target="$TARGET" --with-boot-jdk="$JAVA_HOME" \
+ ${VERSION_OPT:+--with-version-opt="$VERSION_OPT"} ${SOURCE_DATE:+--with-source-date="$SOURCE_DATE"} \
  --with-extra-cflags="$flags" --with-extra-cxxflags="$flags" \
  --with-extra-ldflags="-L$base/tools/dummy-libs -Wl,--undefined-version -Wl,-z,relro,-z,now" \
  --disable-precompiled-headers --disable-warnings-as-errors --enable-option-checking=fatal \
