@@ -1,0 +1,1 @@
+Private integration candidate: clean-built OpenJDK 25.0.4.1 Android port, native conversion and maps fixes, FreeType 2.14.3, DejaVu 2.37. Matching source is prepared separately. This software is based in part on the work of the FreeType Team.

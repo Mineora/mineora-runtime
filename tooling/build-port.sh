@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Mineora build tooling, 2026-10-01. SPDX-License-Identifier: MIT (licenses/Mineora-MIT-LICENSE.txt)
-# Builds the Android ARM64 OpenJDK image from the published source. Packaging and the pinned
-# reproduction result (371 of 372 files byte-identical) are described in BUILDING.md.
+# Builds the Android ARM64 OpenJDK image from the published source. Packaging and rebuild
+# results are in BUILDING.md.
 set -euo pipefail
 # Optional: VERSION_OPT and SOURCE_DATE pin the version string and build date that end up in the
 # image (see BUILDING.md, "Reproducing the shipped bytes"). Unset, configure picks adhoc.<user>.<dir>
@@ -26,6 +26,8 @@ exec > >(tee "$base/evidence/rebuild.log") 2>&1
 trap 'printf "FAILED at line %s\n" "$LINENO" > "$base/evidence/status"' ERR
 export PATH="$JAVA_HOME/bin:$PATH"
 java -version
+# Record exactly which inputs this build used.
+sha256sum "$source_archive" "$dependency_archive" "$6" ${7:+"$7"}
 # Use the supplied trusted source archives. No original harness scripts are run.
 tar -xf "$source_archive" -C "$base/source"
 if [[ $# == 7 ]]; then
@@ -84,8 +86,10 @@ for name in pthread rt thread_db; do ar cr "$base/tools/dummy-libs/lib$name.a"; 
 printf 'CONFIGURING_OPENJDK\n' > "$base/evidence/status"
 cd "$base/source"
 flags='-DLE_STANDALONE -O3 -mllvm -polly -DANDROID -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wno-error=implicit-function-declaration -Wno-error=int-conversion'
-bash configure --openjdk-target="$TARGET" --with-boot-jdk="$JAVA_HOME" \
- ${VERSION_OPT:+--with-version-opt="$VERSION_OPT"} ${SOURCE_DATE:+--with-source-date="$SOURCE_DATE"} \
+pin=()
+[[ -n ${VERSION_OPT:-} ]] && pin+=(--with-version-opt="$VERSION_OPT")
+[[ -n ${SOURCE_DATE:-} ]] && pin+=(--with-source-date="$SOURCE_DATE")
+bash configure --openjdk-target="$TARGET" --with-boot-jdk="$JAVA_HOME" "${pin[@]}" \
  --with-extra-cflags="$flags" --with-extra-cxxflags="$flags" \
  --with-extra-ldflags="-L$base/tools/dummy-libs -Wl,--undefined-version -Wl,-z,relro,-z,now" \
  --disable-precompiled-headers --disable-warnings-as-errors --enable-option-checking=fatal \
