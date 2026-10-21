@@ -1,22 +1,26 @@
 #!/usr/bin/env bash
-# Newly authored Mineora build tooling, 2026-10-01. SPDX-License-Identifier: MIT
-# See BUILD-TOOLING-LICENSE.txt. Portable recipe derived from the successful isolated audit build; a separate fresh build passed; byte-identical reproduction is not established.
+# Mineora build tooling, 2026-10-01. SPDX-License-Identifier: MIT (licenses/Mineora-MIT-LICENSE.txt)
+# Builds the Android ARM64 OpenJDK image from the published source. Packaging and the pinned
+# reproduction result (371 of 372 files byte-identical) are described in BUILDING.md.
 set -euo pipefail
 # Optional: VERSION_OPT and SOURCE_DATE pin the version string and build date that end up in the
 # image (see BUILDING.md, "Reproducing the shipped bytes"). Unset, configure picks adhoc.<user>.<dir>
-# and the current time, which changes a handful of files but no code.
+# and the current time, which changes a handful of files but no code. JOBS sets the parallelism
+# of the FreeType and OpenJDK builds (default 4).
+JOBS=${JOBS:-4}
 if [[ $# != 6 && $# != 7 ]]; then
  echo 'Usage: build-port.sh patched-source.tar.gz dependency-sources.tar.gz boot-jdk-directory ndk-r27b-directory new-output-directory freetype-2.14.3.tar.xz [native-overlay.tar.gz]' >&2
  exit 2
 fi
 source_archive=$(realpath "$1")
 dependency_archive=$(realpath "$2")
-export JAVA_HOME=$(realpath "$3")
+JAVA_HOME=$(realpath "$3")
+export JAVA_HOME
 ndk_input=$(realpath "$4")
 base=$(realpath -m "$5")
 test ! -e "$base" || { echo 'Output directory must not already exist' >&2; exit 2; }
-test -x "$JAVA_HOME/bin/javac"
-test -x "$ndk_input/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"
+test -x "$JAVA_HOME/bin/javac" || { echo "No javac in $JAVA_HOME/bin" >&2; exit 2; }
+test -x "$ndk_input/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang" || { echo "No aarch64-linux-android21-clang in $ndk_input" >&2; exit 2; }
 mkdir -p "$base"/{source,dependencies,tools,evidence}
 exec > >(tee "$base/evidence/rebuild.log") 2>&1
 trap 'printf "FAILED at line %s\n" "$LINENO" > "$base/evidence/status"' ERR
@@ -35,6 +39,9 @@ export TOOLCHAIN="$base/tools/android-ndk-r27b/toolchains/llvm/prebuilt/linux-x8
 export ANDROID_INCLUDE="$TOOLCHAIN/sysroot/usr/include"
 export thecc="$TOOLCHAIN/bin/aarch64-linux-android21-clang"
 export thecxx="$TOOLCHAIN/bin/aarch64-linux-android21-clang++"
+# OpenJDK's configure takes the gcc code path for this cross build. The two wrappers answer its
+# --version probe as GCC 4.9.0 and otherwise forward everything to the NDK clang, dropping the one
+# gcc-only flag configure adds and linking with 16 KB page alignment.
 cat > "$base/tools/cc" <<'WRAPPER'
 #!/usr/bin/env bash
 set -e
@@ -70,7 +77,7 @@ ln -sfn "$base/dependencies/cups-2.2.4/cups" "$ANDROID_INCLUDE/cups"
 printf 'BUILDING_FREETYPE\n' > "$base/evidence/status"
 cd "$base/dependencies/freetype-2.14.3"
 CFLAGS="-O2 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -fPIC" LDFLAGS="-Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=16384 -Wl,-z,relro,-z,now" ./configure --host="$TARGET" --prefix="$PWD/install" --without-zlib --with-png=no --with-harfbuzz=no --with-bzip2=no --with-brotli=no
-make -j4
+make -j"$JOBS"
 make install
 mkdir -p "$base/tools/dummy-libs"
 for name in pthread rt thread_db; do ar cr "$base/tools/dummy-libs/lib$name.a"; done
@@ -92,5 +99,5 @@ bash configure --openjdk-target="$TARGET" --with-boot-jdk="$JAVA_HOME" \
  OBJCOPY="$OBJCOPY" RANLIB="$RANLIB" AR="$AR" STRIP="$STRIP"
 printf '\n# Host tools use GNU bfd, target keeps Android NDK lld.\nJVM_LDFLAGS += -fuse-ld=bfd\n' >> build/linux-aarch64-server-release/buildjdk-spec.gmk
 printf 'BUILDING_OPENJDK\n' > "$base/evidence/status"
-nice -n 10 make images CONF=linux-aarch64-server-release JOBS=4
+nice -n 10 make images CONF=linux-aarch64-server-release JOBS="$JOBS"
 printf 'IMAGES_BUILT_PACKAGING_AND_ANDROID_TESTS_PENDING\n' > "$base/evidence/status"

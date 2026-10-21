@@ -1,17 +1,28 @@
-# Build the Android Java runtime
+# Building the runtime
 
-This recipe builds a usable Android ARM64 image from the supplied source. A separate fresh Linux build passed runtime probes and Paper startup/save/stop. Byte-identical reproduction of the shipped archives is not established. Build-tool paths, timestamps and versions can affect bytes.
+`tooling/build-port.sh` builds the Android ARM64 OpenJDK image from the published source. A
+pinned run of it reproduces every shipped runtime file byte for byte except one (see
+"Reproducing the shipped bytes"). The script ends at the JDK image; packaging into the two shipped
+archives is described below.
 
 ## Inputs
 
-- Linux x86_64 build host, Bash, Python 3, autoconf, make, GNU GCC/binutils with bfd, X11 and fontconfig development headers.
-- Boot JDK 25.
-- Android NDK r27b. The runtime recipe uses r27b; the Android app's native build uses r28. These are separate builds.
-- Included OpenJDK Android-port source, dependency sources, FreeType 2.14.3 and DejaVu 2.37 package.
+- Linux x86_64 host with Bash, Python 3, autoconf, make, GNU GCC and binutils (with bfd, used for
+  the host-side build tools), and the X11 and fontconfig development headers.
+- A boot JDK 25. The shipped runtime used Temurin 25.0.3+9.
+- Android NDK r27b. The runtime is built with r27b; the app's own native code uses NDK 28. They are
+  separate builds.
+- From `Mineora-JVM-25.0.4.1-corresponding-source.zip`: `source/openjdk-25.0.4.1-android-audit-source.tar.gz`,
+  `source/dependency-sources.tar.gz`, `source/freetype-2.14.3.tar.xz`, `source/DejaVu-fonts-2.37.zip`
+  and `packaging/fontconfig.Linux.properties`.
 
-Extract the attached `Mineora-JVM-25.0.4.1-corresponding-source.zip`. From the extracted folder run:
+Use the `tooling/build-port.sh` from this repository, not the copy inside the ZIP: the ZIP's copy
+is from October 6 and does not take the two pinning variables below.
+
+## Build
 
 ```bash
+VERSION_OPT=adhoc.root.source SOURCE_DATE=1791180150 JOBS=4 \
 bash tooling/build-port.sh \
   source/openjdk-25.0.4.1-android-audit-source.tar.gz \
   source/dependency-sources.tar.gz \
@@ -21,39 +32,55 @@ bash tooling/build-port.sh \
   source/freetype-2.14.3.tar.xz
 ```
 
-The output directory must not already exist. The script copies the NDK before creating header links. The script builds FreeType and OpenJDK images; it ends before final app packaging.
+The output directory must not exist yet. The script copies the NDK into the output tree before
+adding header links, builds FreeType, configures and builds OpenJDK, and writes its log to
+`evidence/rebuild.log` under the output directory. It took about 13 minutes with `JOBS=4` on an
+8-core machine.
 
-## Packaging after building
+`VERSION_OPT` and `SOURCE_DATE` pin the version string and build date that OpenJDK embeds in the
+image. The shipped runtime was built as `root` in a directory named `source` on
+2026-10-05T06:02:30Z, which is what those two values encode. Without them, `configure` uses your
+user name, directory and the current time, and 37 files differ from the shipped runtime by that
+text only.
 
-Use the built JDK image under the fresh output's `source/build/linux-aarch64-server-release/images/jdk` and its matching FreeType shared library. Supply DejaVu fonts and the included `packaging/fontconfig.Linux.properties`, retain font/library notices, and remove Lucida files. Strip/clean Android ELF files using the supplied dependency sources and appropriate NDK tools; these post-build steps remain a documented procedure, not a tested one-command byte-identical packager.
+## Packaging
 
-For Mineora's final layout:
+The built image is at `<output>/source/build/linux-aarch64-server-release/images/jdk`, and the
+matching FreeType library at `<output>/dependencies/freetype-2.14.3/install/lib/libfreetype.so`.
+To produce the runtime layout Mineora ships:
 
-1. Retain the runtime libraries/modules, compiler compatibility file `lib/ct.sym`, certificates, configuration, fonts and legal notices. Exclude `.debuginfo`, `jmods/`, `include/`, `demo/`, `man/`, and unused `lib/src.zip` from the installed image. Do not remove corresponding source from its separate downloadable package.
-2. Separate ELF files into `bin-arm64.tar.xz`; put retained non-ELF files into `universal.tar.xz`. Preserve their relative runtime paths and file permissions. The shipped inventories describe the expected installed files.
-3. The Android executable launcher is packaged as `libjavaexec.so` in the app's ARM64 native-library directory. It originates from the runtime's `bin/java`, after the packaging/stripping steps. The name is for Android packaging; it is launched as an executable.
-4. Retain notices in the runtime and app distribution. The final shipped archive and launcher hashes are in `evidence/app-runtime-manifest.json`. A build that differs from them is a new binary requiring tests; do not claim hash identity.
+1. Start from the image. Remove `.debuginfo` files, `jmods/`, `include/`, `demo/`, `man/` and
+   `lib/src.zip`. Keep `lib/ct.sym`, the certificates, configuration, `legal/` and `release`.
+2. Add `libfreetype.so`, the DejaVu 2.37 font files and `fontconfig.Linux.properties`. Remove the
+   Lucida fonts.
+3. Run every ELF file through `termux-elf-cleaner` and `llvm-strip` from the NDK.
+4. Add `legal/mineora/FreeType-FTL.TXT`, `FreeType-GPLv2.TXT`, `FreeType-LICENSE.TXT` and a
+   `RUNTIME-CHANGES.txt` notice.
+5. Split the tree: ELF files into `bin-arm64.tar.xz`, everything else into `universal.tar.xz`,
+   keeping relative paths and permissions. The app installs both under one directory.
+6. The app ships `bin/java` from the ELF set a second time as `libjavaexec.so` in its `arm64-v8a`
+   native library directory, so that Android installs it as an executable.
+
+The shipped archive and launcher hashes are in `evidence/app-runtime-manifest.json`. A build that
+differs from them is a new binary and needs the tests in `KNOWN-LIMITATIONS.md` again.
 
 ## Reproducing the shipped bytes
 
-The image embeds the configure-time version string and build date. The shipped runtime was built
-as `root` in a directory named `source` on 2026-10-05T06:02:30Z, so pass those values to get the
-same bytes:
+On October 20, 2026 the recipe was run twice on an Arch Linux x86_64 host with the inputs above,
+packaged as described, and compared file by file against the shipped runtime:
 
-```bash
-VERSION_OPT=adhoc.root.source SOURCE_DATE=1791180150 bash tooling/build-port.sh ...
-```
+| Run | Identical files | Different | What differs |
+| --- | --- | --- | --- |
+| Without the pinning variables | 335 of 372 | 37 | Only the embedded version string and build date |
+| With `VERSION_OPT=adhoc.root.source SOURCE_DATE=1791180150` | 371 of 372 | 1, `lib/modules` | 4 bytes in each of two `jdk.jpackage` launcher resources, which Mineora does not use, plus the module hashes derived from them |
 
-Result on October 20, 2026 (Arch Linux host, same inputs, NDK r27b, boot JDK Temurin 25.0.3): after
-the packaging steps above, 371 of the 372 files shared with the shipped runtime were byte-identical,
-including `libjvm.so`, `libjava.so`, every launcher and `release`. The one remaining difference is
-`lib/modules`: 4 bytes in each of two `jdk.jpackage` launcher resources (not used by Mineora) and the
-module hashes in `java.base/module-info.class` and `SystemModules*.class` that are derived from them.
-Without the two variables, 37 files differ, all of them only in the version string or build date.
-Details are in `evidence/build-provenance.md`.
+`libjvm.so`, `libjava.so`, every launcher, `release` and all other files matched in the pinned run.
+The two shipped `.tar.xz` archives were not themselves regenerated byte-identically; the comparison
+is of the files inside them. Full tables: `evidence/build-provenance.md`.
 
 ## Validation
 
-Small probe sources are in `probes/`. Test file/ZIP UTF-8, NIO, ProcessBuilder, instrumentation, fonts/PNG, and a real server with normal saved shutdown. Also test application extraction/upgrade, existing worlds, launch flags and target Android versions. These probe sources are not a substitute for the complete OpenJDK test suite.
-
-This archive covers the maintained OpenJDK runtime. The separate app compatibility agent and native statx helper are described in `KNOWN-LIMITATIONS.md`; this package is not a source-provenance certification for every APK component.
+The JVM ZIP's `probes/` directory holds small test programs for UTF-8 file and ZIP handling, NIO and
+child processes, the instrumentation agent, headless fonts and PNG output, and the memory-map and
+iconv native code. Run them, then a real server through startup, save and normal stop. They are not
+a substitute for the OpenJDK test suite.

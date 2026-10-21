@@ -1,11 +1,36 @@
 {
   "runtime_id": "mineora-openjdk-25.0.4.1-android-integration-20261005-v2",
-  "native_files": 67,
-  "common_files": 309,
+  "used_by": [
+    "Mineora 1.2.6 (version code 28)",
+    "Mineora 1.2.7 (version code 30)"
+  ],
   "archives": {
-    "bin-arm64.tar.xz": "8b99e2ce17e5aa81cff385d9d0c5e62a345eca57333ba6e96e50058f8aa4413f",
-    "universal.tar.xz": "aff39f099b4f1cb768a90d9d16aa26392d79eb1a197eee87854e6f2135e6b780"
+    "bin-arm64.tar.xz": {
+      "sha256": "8b99e2ce17e5aa81cff385d9d0c5e62a345eca57333ba6e96e50058f8aa4413f",
+      "files": 67,
+      "contents": "every ELF file of the runtime"
+    },
+    "universal.tar.xz": {
+      "sha256": "aff39f099b4f1cb768a90d9d16aa26392d79eb1a197eee87854e6f2135e6b780",
+      "files": 309,
+      "contents": "everything else: lib/modules, fonts, certificates, configuration, legal notices, release"
+    }
   },
-  "launcher_sha256": "601e63091197ab6eec0e38edb340aa279ea82999e9f8f172b1ee858ce528b282",
-  "packaging_change": "Only lib/src.zip removed; all retained runtime file bytes unchanged"
+  "launcher": {
+    "file": "libjavaexec.so in the app's arm64-v8a native library directory",
+    "origin": "bin/java from bin-arm64.tar.xz, unchanged",
+    "sha256": "601e63091197ab6eec0e38edb340aa279ea82999e9f8f172b1ee858ce528b282"
+  },
+  "integration_changes_from_clean_build": {
+    "removed": ["lib/src.zip"],
+    "added": [
+      "legal/mineora/FreeType-FTL.TXT",
+      "legal/mineora/FreeType-GPLv2.TXT",
+      "legal/mineora/FreeType-LICENSE.TXT",
+      "legal/mineora/RUNTIME-CHANGES.txt"
+    ],
+    "modified": []
+  },
+  "per_file_hashes": "evidence/runtime-hashes.json and evidence/production-common-runtime-hashes.json inside Mineora-JVM-25.0.4.1-corresponding-source.zip",
+  "comparison": "evidence/build-provenance.md"
 }

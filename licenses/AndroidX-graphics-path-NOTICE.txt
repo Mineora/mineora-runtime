@@ -1,0 +1,6 @@
+AndroidX graphics-path 1.0.1 JNI
+Copyright 2022 The Android Open Source Project. Apache License 2.0.
+Native source commit: 8a05a22af450d589ef911d772a001a49dcb05b71
+Rebuilt with Android NDK 28.2.13676358 and 16 KB max/common page sizes.
+No upstream C++ behavior changes. Original copyright notices retained.
+Source: https://android.googlesource.com/platform/frameworks/support/+/8a05a22af450d589ef911d772a001a49dcb05b71/graphics/graphics-path/

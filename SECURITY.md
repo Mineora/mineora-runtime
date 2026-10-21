@@ -1,11 +1,19 @@
-# Runtime security scope
+# Security
 
-This repository provides source and build information for Mineora's Android runtime integration. It is not a separate supported desktop Java distribution.
+This repository documents the Java runtime inside the Mineora Android app. It is not a general
+Java distribution and has no support channel of its own.
 
-Server JARs, plugins and mods are executable code. Imported code runs with Mineora's file and network permissions. There is no separate sandbox per server. Only run trusted code.
+Server JARs, plugins and mods are executable code. Inside Mineora they run with the app's file and
+network permissions, with no sandbox between servers. Only run server software you trust.
 
-## Reporting an issue
+## Reporting a problem
 
-Provide the runtime/server versions, a minimal reproduction and a redacted error description. Do not include credentials, signing keys, full server backups, personal addresses or user worlds in an issue. Contact the maintainer privately before sharing sensitive vulnerability details publicly.
+Open a GitHub issue for runtime and build-recipe problems. Include the Mineora version, the server
+software and version, and a minimal description of what happened. Do not include credentials,
+signing keys, server backups, personal addresses or player worlds.
 
-See KNOWN-LIMITATIONS.md for test coverage. Targeted checks do not prove absence of every vulnerability. Runtime or dependency changes require new testing.
+For a vulnerability, contact the maintainer privately through the Mineora support address shown on
+Google Play before publishing details.
+
+[KNOWN-LIMITATIONS.md](KNOWN-LIMITATIONS.md) lists what was tested. Those checks do not prove the
+absence of vulnerabilities, and any change to the runtime or its dependencies needs new testing.
