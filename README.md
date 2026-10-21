@@ -17,18 +17,18 @@ ZIP on the release page contains only this documentation repository, not OpenJDK
 
 ## Source downloads
 
-Release [`mineora-1.2.6-runtime-v3`](https://github.com/Mineora/mineora-runtime/releases/tag/mineora-1.2.6-runtime-v3)
-(October 6, 2026). It is titled for 1.2.6 and applies unchanged to 1.2.7.
+Release [`mineora-1.2.7-runtime-v4`](https://github.com/Mineora/mineora-runtime/releases/tag/mineora-1.2.7-runtime-v4) (October 21, 2026).
 
 | File | Contents | SHA-256 |
 | --- | --- | --- |
-| [Mineora-JVM-25.0.4.1-corresponding-source.zip](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.6-runtime-v3/Mineora-JVM-25.0.4.1-corresponding-source.zip) (157 MB) | Patched OpenJDK source, FreeType 2.14.3, DejaVu 2.37, dependency sources, build script, probes, shipped-file hashes, notices | `fcfb6c28b686ffe848314cc6966c588be77d8dc45dd54b642702ca00b2651342` |
-| [Mineora-Playit-Android-source.zip](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.6-runtime-v3/Mineora-Playit-Android-source.zip) | Playit agent 0.17.1 source, `Cargo.lock`, rebuild flags, dependency notices | `4c6709749990f611091a800e198ad97b80b4d7890e99c191ae9a48d66afb809a` |
-| [Mineora-Android-runtime-helpers-source.zip](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.6-runtime-v3/Mineora-Android-runtime-helpers-source.zip) | Java compatibility agent with pinned ASM 9.10.1 source, statx shim, AndroidX graphics-path 1.0.1 JNI source | `b7324b45b17f25c33dffbf59ffc36f5d516403fc1cc51bb7edc222772fe69628` |
-| [SHA256SUMS.txt](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.6-runtime-v3/SHA256SUMS.txt) | The same three hashes | |
+| [Mineora-JVM-25.0.4.1-corresponding-source.zip](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.7-runtime-v4/Mineora-JVM-25.0.4.1-corresponding-source.zip) (157 MB) | Patched OpenJDK source, FreeType 2.14.3, DejaVu 2.37, dependency sources, build and packaging scripts, change list, probes, shipped-file hashes, notices | `894826fd5e3d472a9be2bc1bd4b8c35a2caf34334fdefa1895fd1dcb0219a532` |
+| [Mineora-Playit-Android-source.zip](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.7-runtime-v4/Mineora-Playit-Android-source.zip) | Playit agent 0.17.1 source, `Cargo.lock`, rebuild flags, dependency notices | `4c6709749990f611091a800e198ad97b80b4d7890e99c191ae9a48d66afb809a` |
+| [Mineora-Android-runtime-helpers-source.zip](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.7-runtime-v4/Mineora-Android-runtime-helpers-source.zip) | Java compatibility agent with pinned ASM 9.10.1 source, statx shim, AndroidX graphics-path 1.0.1 JNI source | `b7324b45b17f25c33dffbf59ffc36f5d516403fc1cc51bb7edc222772fe69628` |
+| [SHA256SUMS.txt](https://github.com/Mineora/mineora-runtime/releases/download/mineora-1.2.7-runtime-v4/SHA256SUMS.txt) | The same three hashes | |
 
-The documents and scripts inside the JVM ZIP are the October 6 versions. Use the scripts in this
-repository's `tooling/` folder; [BUILDING.md](BUILDING.md) explains why.
+The JVM ZIP replaces the one in `mineora-1.2.6-runtime-v3` (October 6, 2026): same source, with the
+current documents, the packaging script and the change list. The Playit and helpers ZIPs are
+unchanged.
 
 ## What the runtime contains
 

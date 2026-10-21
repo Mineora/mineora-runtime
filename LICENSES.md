@@ -35,7 +35,8 @@ sources and licence texts are in `source/dependency-sources.tar.gz` inside the J
 ## Source for the GPL parts
 
 The complete corresponding source for the GPL-licensed parts is
-`Mineora-JVM-25.0.4.1-corresponding-source.zip` on the release named in the README. It contains the
+`Mineora-JVM-25.0.4.1-corresponding-source.zip` on the latest release at
+https://github.com/Mineora/mineora-runtime/releases. It contains the
 modified OpenJDK source and the dependency sources. The scripts that build and package it are in
 this repository's `tooling/` folder, and the list of changed files is in `CHANGES.md`.
 Anyone redistributing the runtime must keep the licence texts and notices and keep this source

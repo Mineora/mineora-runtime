@@ -2,8 +2,9 @@
 
 Two scripts in `tooling/` turn the published source into the shipped runtime:
 `build-port.sh` builds the JDK image, `package-runtime.py` packages it into the two archives.
-Use the copies in this repository. The copy of `build-port.sh` inside the October 6 JVM ZIP
-predates the `VERSION_OPT` and `SOURCE_DATE` variables, and the ZIP has no packaging script.
+The source ZIP of release `mineora-1.2.7-runtime-v4` contains the same scripts. (The October 6
+`mineora-1.2.6-runtime-v3` ZIP has an older `build-port.sh` without the `VERSION_OPT` and
+`SOURCE_DATE` variables, and no packaging script.)
 
 ## Inputs
 

@@ -10,7 +10,7 @@
 
 ## Recorded test results
 
-The release's own record is `evidence/validation-summary.json` inside
+The record is `evidence/validation-summary.json` in
 `Mineora-JVM-25.0.4.1-corresponding-source.zip`, dated October 6, 2026, for Mineora 1.2.6. It
 records:
 
