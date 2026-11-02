@@ -75,31 +75,9 @@ A src/java.base/unix/native/libjava/posix_spawn.c
 A src/java.base/unix/native/libjava/posix_spawn.h
 ```
 
-Third-party code in the added files, under its own licence (see [LICENSES.md](LICENSES.md)):
+Third-party code in the added files, under its own licence:
 
 - `posix_spawn.c` and `.h`: from Android's dhcpcd compatibility code, Copyright 2006-2012 Roy
   Marples, BSD 2-Clause. Compiled into `libjava`.
 - `libtinyiconv/iconv.cpp`: Copyright 2017 The Android Open Source Project, BSD 3-Clause. Compiled
   into `libinstrument` and `libjdwp`.
-
-## Build and packaging
-
-- Configured headless only, `server` JVM variant, with the `dtrace`, `zero`, `vm-structs` and
-  `epsilongc` features disabled; compiled with the Android NDK r27b clang for
-  `aarch64-linux-android21` with 16 KB page alignment (`tooling/build-port.sh`).
-- Packaged by `tooling/package-runtime.py`: debug files, `jmods/`, `include/`, `demo/`, `man/` and
-  `lib/src.zip` left out; FreeType and the DejaVu fonts added; every ELF file run through
-  `termux-elf-cleaner` and `llvm-strip`; notices added under `legal/mineora/`.
-- The app ships the runtime's `bin/java` a second time as `libjavaexec.so` in its native library
-  directory, so Android installs it as an executable file.
-
-## Separate components, not part of the OpenJDK source
-
-Their source and build steps are in the helpers and Playit ZIPs on the release.
-
-- Java compatibility agent `mineora-j25shim.jar`: Mineora code on ASM 9.10.1, relocated to
-  `app.mineora.shim.asm`, compiled for Java 11.
-- `statx` shim: a small native library for older kernels.
-- AndroidX graphics-path 1.0.1 JNI library, rebuilt from the pinned upstream source with NDK 28 and
-  16 KB page alignment.
-- Playit agent 0.17.1 (`libplayit.so`), built from the locked source with Rust 1.99.0 and NDK r27b.
